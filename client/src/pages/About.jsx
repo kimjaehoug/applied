@@ -1,6 +1,8 @@
 import SectionTitle from '../components/SectionTitle'
 import EditableSection from '../components/EditableSection'
 import EditJsonModal from '../components/EditJsonModal'
+import NewsEditorModal from '../components/NewsEditorModal'
+import NewsCarousel from '../components/NewsCarousel'
 import { useContent } from '../contexts/ContentContext'
 
 export default function About() {
@@ -67,20 +69,18 @@ export default function About() {
           content={news}
           onSave={updateSection}
           renderEditor={(content, onSave, { saving, onCancel }) => (
-            <EditJsonModal title="뉴스 목록" data={content} onSave={onSave} onCancel={onCancel} saving={saving} />
+            <NewsEditorModal
+              title="뉴스 관리 (추가/삭제 및 이미지 업로드 가능)"
+              data={content}
+              onSave={onSave}
+              onCancel={onCancel}
+              saving={saving}
+            />
           )}
         >
           <section className="mt-16">
             <SectionTitle title="NEWS" />
-            <div className="space-y-4">
-              {news.map((item, i) => (
-                <article key={i} className="p-5 bg-white border border-gray-200 rounded-xl hover:shadow-md transition-shadow">
-                  <p className="text-sm text-jbnu-navy font-medium">{item.date} · {item.source}</p>
-                  <h3 className="text-lg font-semibold text-gray-900 mt-1">{item.title}</h3>
-                  <p className="text-gray-600 mt-2">{item.body}</p>
-                </article>
-              ))}
-            </div>
+            <NewsCarousel items={news} />
           </section>
         </EditableSection>
       </div>

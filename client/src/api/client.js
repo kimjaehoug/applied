@@ -25,3 +25,16 @@ export async function putContent(page, section, content) {
     body: JSON.stringify({ page, section, content }),
   })
 }
+
+export async function uploadNewsImage(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  const res = await fetch(`${BASE}/api/uploads/news`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.message || res.statusText)
+  return data
+}

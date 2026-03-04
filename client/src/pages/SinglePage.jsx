@@ -2,6 +2,7 @@ import { useState } from 'react'
 import SectionTitle from '../components/SectionTitle'
 import EditableSection from '../components/EditableSection'
 import EditJsonModal from '../components/EditJsonModal'
+import NewsCarousel from '../components/NewsCarousel'
 import { useContent } from '../contexts/ContentContext'
 
 function PersonCard({ name, role, period, research }) {
@@ -85,7 +86,7 @@ export default function SinglePage() {
             {site.dept}
           </p>
           <p className="text-sm sm:text-base text-gray-300">
-            AI for Health · Environment · Society
+            Artificial Intelligence Research &amp; Innovation
           </p>
         </div>
       </section>
@@ -118,30 +119,40 @@ export default function SinglePage() {
                   ))}
                 </ul>
               </div>
-              <div className="mt-12 pt-10 border-t border-gray-100">
-                <h3 className="text-xl font-bold text-jbnu-navy mb-1">Our Topics</h3>
-                <p className="text-sm text-gray-500 mb-8">Research areas we focus on</p>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-                  {(professor.topics || []).map((t, i) => (
-                    <article
-                      key={i}
-                      className="group flex flex-col bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl hover:border-jbnu-navy/30 transition-all duration-300"
-                    >
-                      <div className="relative aspect-[4/3] overflow-hidden bg-gray-50">
-                        <img
-                          src={topicImages[i] || topicImages[0]}
-                          alt={t}
-                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </div>
-                      <div className="p-5 flex-1 flex flex-col justify-center">
-                        <h4 className="text-base font-semibold text-jbnu-navy text-center leading-snug">{t}</h4>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
+            </div>
+          </div>
+          <div className="mt-20">
+            <div className="relative mb-10 text-center">
+              <div className="absolute inset-x-0 top-1/2 -z-10 h-px bg-gradient-to-r from-transparent via-gray-200 to-transparent" />
+              <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white shadow-sm border border-gray-100 text-sm sm:text-base font-semibold tracking-wide uppercase text-gray-600">
+                <span className="inline-block w-2 h-2 rounded-full bg-jbnu-gold" />
+                Our Topics
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 mb-8 text-center">
+              Representative research themes leading the Applied AI Lab
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {(professor.topics || []).map((t, i) => (
+                <article
+                  key={i}
+                  className="group flex flex-col bg-white/95 rounded-[2rem] border border-gray-100 overflow-hidden shadow-lg hover:shadow-2xl hover:border-jbnu-navy/60 transition-all duration-300 hover:-translate-y-2"
+                >
+                  <div className="relative h-64 sm:h-72 xl:h-80 overflow-hidden bg-gray-50">
+                    <img
+                      src={topicImages[i] || topicImages[0]}
+                      alt={t}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-115"
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/10 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="absolute inset-x-7 bottom-6">
+                      <h4 className="text-lg sm:text-2xl font-semibold text-white leading-snug">
+                        {t}
+                      </h4>
+                    </div>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
         </div>
@@ -149,19 +160,11 @@ export default function SinglePage() {
 
       {/* News */}
       <section id="news" className="scroll-mt-24 py-16 px-4 bg-gray-50">
-          <div className="max-w-6xl mx-auto">
-            <SectionTitle title="NEWS" />
-            <div className="space-y-6">
-              {news.slice(0, 6).map((item, i) => (
-                <article key={i} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <p className="text-sm text-jbnu-navy font-medium">{item.date} · {item.source}</p>
-                  <h3 className="text-lg font-semibold text-gray-900 mt-1">{item.title}</h3>
-                  <p className="text-gray-600 mt-2">{item.body}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
+        <div className="max-w-6xl mx-auto">
+          <SectionTitle title="NEWS" />
+          <NewsCarousel items={news} />
+        </div>
+      </section>
 
       {/* Research */}
       <section id="research" className="scroll-mt-24 py-16 px-4">

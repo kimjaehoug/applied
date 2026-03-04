@@ -28,9 +28,9 @@ export default function Layout({ children }) {
         </div>
       )}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200">
-        <nav className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <nav className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center rounded-lg transition-opacity hover:opacity-80 active:opacity-70">
-            <img src="/image/logo.png" alt="Applied AI Lab" className="h-8 sm:h-9" />
+            <img src="/image/logo.png" alt="Applied AI Lab" className="h-12 sm:h-14 md:h-16 lg:h-20" />
           </Link>
           <ul className="flex items-center gap-1 sm:gap-4">
             {navItems.map((item) => (
@@ -45,13 +45,6 @@ export default function Layout({ children }) {
                 </a>
               </li>
             ))}
-            {showAdminUI && !isAdmin && (
-              <li>
-                <Link to="/admin/login" className="px-3 py-2 text-sm text-gray-500 hover:text-jbnu-navy">
-                  관리자
-                </Link>
-              </li>
-            )}
           </ul>
         </nav>
       </header>
@@ -62,6 +55,11 @@ export default function Layout({ children }) {
           <p>Dept. of Software Engineering, Jeonbuk National University</p>
           <p className="mt-2 text-gray-300">567, Baekje-daero, Deokjin-gu, Jeonju-si, Jeonbuk-do, Republic of Korea</p>
           <p className="mt-1 text-gray-400">Engineering Building No.5, Room No. 309</p>
+          <p className="mt-3 text-xs text-gray-400">
+            <Link to="/admin/login" className="hover:text-white underline-offset-2 hover:underline">
+              Admin
+            </Link>
+          </p>
         </div>
       </footer>
     </div>

@@ -2,12 +2,17 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import session from 'express-session'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.js'
 import contentRoutes from './routes/content.js'
+import uploadRoutes from './routes/upload.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
 const isDev = process.env.NODE_ENV !== 'production'
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 app.use(cors({
   origin: isDev ? 'http://localhost:3000' : process.env.FRONT_ORIGIN,
@@ -26,6 +31,9 @@ app.use(session({
   },
 }))
 
+// 정적 업로드 파일 서빙
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
+
 // 문의 메일 API
 app.post('/api/contact', (req, res) => {
   const { name, email, subject, message } = req.body
@@ -38,6 +46,7 @@ app.post('/api/contact', (req, res) => {
 
 app.use('/api/auth', authRoutes)
 app.use('/api/content', contentRoutes)
+app.use('/api/uploads', uploadRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)

@@ -2,6 +2,8 @@ import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import EditableSection from '../components/EditableSection'
 import EditJsonModal from '../components/EditJsonModal'
+import NewsEditorModal from '../components/NewsEditorModal'
+import NewsCarousel from '../components/NewsCarousel'
 import { useContent } from '../contexts/ContentContext'
 
 export default function Home() {
@@ -112,21 +114,19 @@ export default function Home() {
         content={news}
         onSave={updateSection}
         renderEditor={(content, onSave, { saving, onCancel }) => (
-          <EditJsonModal title="뉴스 목록" data={content} onSave={onSave} onCancel={onCancel} saving={saving} />
+          <NewsEditorModal
+            title="뉴스 관리 (추가/삭제 및 이미지 업로드 가능)"
+            data={content}
+            onSave={onSave}
+            onCancel={onCancel}
+            saving={saving}
+          />
         )}
       >
         <section className="py-16 px-4 bg-gray-50">
           <div className="max-w-6xl mx-auto">
             <SectionTitle title="NEWS" />
-            <div className="space-y-6">
-              {news.slice(0, 6).map((item, i) => (
-                <article key={i} className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow">
-                  <p className="text-sm text-jbnu-navy font-medium">{item.date} · {item.source}</p>
-                  <h3 className="text-lg font-semibold text-gray-900 mt-1">{item.title}</h3>
-                  <p className="text-gray-600 mt-2">{item.body}</p>
-                </article>
-              ))}
-            </div>
+            <NewsCarousel items={news} />
             <div className="mt-8 text-center">
               <Link to="/about" className="text-jbnu-navy font-semibold hover:underline">더보기 →</Link>
             </div>
