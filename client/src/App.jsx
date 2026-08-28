@@ -4,6 +4,7 @@ import { ContentProvider } from './contexts/ContentContext'
 import Layout from './components/Layout'
 import SinglePage from './pages/SinglePage'
 import AdminLogin from './pages/AdminLogin'
+import NewsAdd from './pages/NewsAdd'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Routes>
             <Route path="/" element={<SinglePage />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/news/add" element={<NewsAdd />} />
             <Route path="/about" element={<Navigate to="/#about" replace />} />
             <Route path="/research" element={<Navigate to="/#research" replace />} />
             <Route path="/members" element={<Navigate to="/#members" replace />} />

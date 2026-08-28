@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function NewsCarousel({ items }) {
+export default function NewsCarousel({ items, isAdmin, onDelete }) {
   const list = Array.isArray(items) ? items : []
   const [index, setIndex] = useState(0)
 
@@ -82,6 +82,15 @@ export default function NewsCarousel({ items }) {
               />
             ))}
           </div>
+        )}
+        {isAdmin && current.id && (
+          <button
+            type="button"
+            onClick={() => onDelete?.(current.id)}
+            className="mt-4 self-start px-4 py-2 bg-red-600 text-white text-sm rounded-lg font-medium hover:bg-red-700"
+          >
+            이 뉴스 삭제
+          </button>
         )}
       </div>
     </div>

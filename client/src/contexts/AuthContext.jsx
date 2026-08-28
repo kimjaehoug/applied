@@ -37,6 +37,15 @@ export function AuthProvider({ children }) {
 
 export function useAuth() {
   const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider')
+  if (!ctx) {
+    // Provider 바깥에서 호출되더라도 앱이 크래시되지 않도록 안전한 기본값 반환
+    return {
+      user: null,
+      loading: false,
+      login: async () => null,
+      logout: async () => {},
+      isAdmin: false,
+    }
+  }
   return ctx
 }

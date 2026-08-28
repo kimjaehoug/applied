@@ -1,0 +1,257 @@
+/* 기본 리셋 및 폰트 설정 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
+    overflow-x: hidden;
+}
+
+/* Header */
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+}
+
+.header .nav a {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    background: url('hero-bg-placeholder.jpg') no-repeat center center/cover;
+    /* 실제 야경 이미지를 배경으로 넣으세요 */
+    display: flex;
+    align-items: center;
+    padding-left: 10%;
+    position: relative;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top:0; left:0; width:100%; height:100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.8) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+/* Dark Services Grid */
+.dark-grid-section {
+    padding: 100px 5%;
+    text-align: center;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    max-width: 800px;
+    margin: 0 auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grid-item {
+    padding: 60px 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.grid-item:nth-child(even) {
+    border-right: none;
+}
+.grid-item:nth-child(3), .grid-item:nth-child(4) {
+    border-bottom: none;
+}
+
+.grid-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.grid-item p {
+    color: #00bfff; /* 포인트 컬러 */
+    font-size: 0.9rem;
+}
+
+.transition-text {
+    margin-top: 100px;
+    font-size: 1.2rem;
+    color: #aaa;
+    line-height: 1.6;
+}
+
+/* Showcase Section (Checkerboard) */
+.showcase-section {
+    background-color: #f8f8f8;
+    color: #000;
+}
+
+.showcase-row {
+    display: flex;
+    height: 60vh;
+    min-height: 400px;
+}
+
+.showcase-row.reverse {
+    flex-direction: row-reverse;
+}
+
+.showcase-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 50px;
+}
+
+.showcase-text .highlight {
+    color: #007bff;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.showcase-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.showcase-text p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.showcase-image {
+    flex: 1;
+    background-color: #ddd;
+    background-size: cover;
+    background-position: center;
+}
+
+/* Mid Tagline */
+.mid-tagline {
+    background-color: #fff;
+    color: #000;
+    text-align: center;
+    padding: 150px 20px;
+}
+
+.mid-tagline h2 {
+    font-size: 2.5rem;
+    line-height: 1.5;
+    font-weight: 600;
+}
+
+/* Our Service Section */
+.our-service-section {
+    padding: 100px 10%;
+    background-color: #050505;
+}
+
+.service-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.service-header h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.service-list {
+    list-style: none;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.service-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+    border-bottom: 1px solid #333;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.service-item:hover, .service-item.active {
+    color: #fff;
+}
+
+.service-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #888;
+}
+
+.service-item.active .service-name {
+    color: #fff;
+}
+
+.service-desc {
+    color: #666;
+}
+
+.badge {
+    color: #007bff;
+    font-size: 1rem;
+    margin-left: 10px;
+}
+
+/* 액티브/호버 시 보이는 원형 이미지 효과 */
+.hover-circle {
+    display: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: #555 url('circle-image-placeholder.jpg') center/cover;
+}
+
+.service-item.active .hover-circle {
+    display: block;
+}
+
+/* 반응형 모바일 설정 */
+@media (max-width: 768px) {
+    .hero-content h1 { font-size: 2.5rem; }
+    .showcase-row, .showcase-row.reverse { flex-direction: column; height: auto; }
+    .showcase-image { height: 300px; width: 100%; }
+    .grid-container { grid-template-columns: 1fr; }
+    .grid-item { border-right: none; }
+}

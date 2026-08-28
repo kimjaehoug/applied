@@ -8,6 +8,9 @@
     "dev:server": "cd server && npm run dev",
     "build": "cd client && npm run build",
     "start": "cd server && npm start",
+    "db:create": "cd server && npm run db:create",
+    "db:seed": "cd server && npm run seed",
+    "db:init": "npm run db:create && npm run db:seed",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

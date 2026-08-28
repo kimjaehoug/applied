@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import authRoutes from './routes/auth.js'
 import contentRoutes from './routes/content.js'
 import uploadRoutes from './routes/upload.js'
+import newsRoutes from './routes/news.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -15,7 +16,15 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 app.use(cors({
-  origin: isDev ? 'http://localhost:3000' : process.env.FRONT_ORIGIN,
+  origin: (origin, cb) => {
+    // 개발 환경: 다양한 호스트/포트(예: localhost, 0.0.0.0, 내부 IP)에서 접속 가능하도록 허용
+    if (isDev) return cb(null, true)
+
+    const allowed = (process.env.FRONT_ORIGIN || '').trim()
+    if (!origin) return cb(null, true) // curl/postman 등
+    if (allowed && origin === allowed) return cb(null, true)
+    return cb(new Error('Not allowed by CORS'))
+  },
   credentials: true,
 }))
 app.use(express.json())
@@ -47,6 +56,7 @@ app.post('/api/contact', (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/content', contentRoutes)
 app.use('/api/uploads', uploadRoutes)
+app.use('/api/news', newsRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)

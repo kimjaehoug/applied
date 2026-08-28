@@ -3,6 +3,7 @@
  * 실행: node seed.js
  * 환경변수: MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE
  */
+import 'dotenv/config'
 import mysql from 'mysql2/promise'
 import bcrypt from 'bcryptjs'
 import { readFileSync } from 'fs'

@@ -1,13 +1,524 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  @apply antialiased text-gray-800 bg-white;
+  @apply antialiased;
+  background-color: #000;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* ========== Ref design: Header ========== */
+.ref-header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 50px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+}
+
+.ref-header .ref-nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 15px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ref-header .ref-nav a:hover {
+  opacity: 0.9;
+}
+
+/* ========== Ref design: Hero ========== */
+.ref-hero {
+  height: 100vh;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 50%, #1a2d47 100%);
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  padding-left: 10%;
+  position: relative;
+}
+
+.ref-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
+  pointer-events: none;
+}
+
+.ref-hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.ref-hero-content h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.ref-hero-content .ref-hero-sub {
+  margin-top: 1rem;
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ========== Ref design: Dark grid ========== */
+.ref-dark-grid-section {
+  padding: 100px 5%;
+  text-align: center;
+  background-color: #000;
+}
+
+.ref-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  max-width: 800px;
+  margin: 0 auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ref-grid-item {
+  padding: 60px 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ref-grid-item:nth-child(even) {
+  border-right: none;
+}
+
+.ref-grid-item:nth-child(3),
+.ref-grid-item:nth-child(4) {
+  border-bottom: none;
+}
+
+.ref-grid-item h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.ref-grid-item p {
+  color: #00bfff;
+  font-size: 0.9rem;
+}
+
+.ref-transition-text {
+  margin-top: 100px;
+  font-size: 1.2rem;
+  color: #aaa;
+  line-height: 1.6;
+}
+
+/* ========== Ref design: Showcase (checkerboard) ========== */
+.ref-showcase-section {
+  background-color: #f8f8f8;
+  color: #000;
+}
+
+.ref-showcase-row {
+  display: flex;
+  height: 60vh;
+  min-height: 400px;
+}
+
+.ref-showcase-row.ref-reverse {
+  flex-direction: row-reverse;
+}
+
+.ref-showcase-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 50px;
+}
+
+.ref-showcase-text .ref-highlight {
+  color: #007bff;
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.ref-showcase-text h2 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.ref-showcase-text p {
+  color: #666;
+  line-height: 1.6;
+}
+
+.ref-showcase-image {
+  flex: 1;
+  background-color: #ddd;
+  background-size: cover;
+  background-position: center;
+}
+
+/* ========== About + 연역 (스크롤 시 걸리며 왼쪽 위로·연역 표시·오른쪽 사진 확대) ========== */
+.about-with-yeonyeok {
+  position: relative;
+}
+
+.about-sticky-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: stretch;
+  background-color: #f8f8f8;
+  padding-top: 140px;
+  padding-bottom: 80px;
+  box-sizing: border-box;
+}
+
+.about-expand-row {
+  display: flex;
+  width: 100%;
+  align-items: stretch;
+  gap: 2rem;
+}
+
+.about-left-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 3rem;
+  min-width: 0;
+  overflow: visible;
+  transition: justify-content 0.4s ease;
+}
+
+.about-left-col.expanded {
+  justify-content: flex-start;
+  padding-top: 1rem;
+}
+
+/* 왼쪽 인트로 전용 – 여기만 수정해도 연역에는 영향 없음 */
+.about-left-intro {
+  text-align: left;
+  width: 100%;
+  max-width: 480px;
+  transition: transform 0.4s ease;
+  flex-shrink: 0;
+}
+
+.about-left-col.expanded .about-left-intro {
+  transform: translateY(-12px);
+}
+
+.about-yeonyeok-below {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 480px;
+  animation: aboutYeonyeokIn 0.35s ease;
+}
+
+@keyframes aboutYeonyeokIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.about-yeonyeok-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e3a5f;
+  margin-bottom: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.about-yeonyeok-title:first-child {
+  margin-top: 0;
+}
+
+/* ========== CHIEF / RESEARCH / VISION 각각 글자 크기 조절 (아래 블록에서 수정) ========== */
+
+/* CHIEF(소개) 연역 전용 */
+.chief-yeonyeok-list .about-yeonyeok-title {
+  font-size: 1.15rem;
+}
+.chief-yeonyeok-list .about-yeonyeok-list {
+  font-size: 0.9rem;
+}
+
+.research-topic-block:not(:first-child) {
+  margin-top: 1.25rem;
+}
+
+/* RESEARCH 펼침: 4분면(2x2) 그리드 – 4개 내용을 감싸는 컨테이너 하나 */
+.about-yeonyeok-below.research-quadrants {
+  max-width: 100%;
+}
+
+.research-quadrants {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.75rem 1rem;
+  flex: 1;
+  min-height: 0;
+  margin-top: 0.5rem;
+}
+
+.research-quadrants .research-topic-block {
+  margin-top: 0;
+  padding: 0.6rem 0.75rem;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  overflow: auto;
+  min-height: 0;
+}
+
+/* RESEARCH(연구 분야) 4분면 전용 – 제목/소제목/리스트 크기 조절 */
+.research-quadrants .research-topic-block .about-yeonyeok-title {
+  font-size: 1.3rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.research-quadrants .research-topic-block .about-yeonyeok-title:first-child {
+  margin-top: 0;
+}
+
+.research-quadrants .research-topic-block .research-subtitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1e3a5f;
+  margin-top: 0.4rem;
+}
+
+.research-quadrants .about-yeonyeok-list {
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.research-quadrants .about-yeonyeok-list li {
+  padding: 0.1rem 0;
+  padding-left: 0.75rem;
+}
+
+.about-yeonyeok-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #333;
+  line-height: 1.65;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.about-yeonyeok-list li {
+  padding: 0.2rem 0;
+  padding-left: 1rem;
+  position: relative;
+}
+
+.about-yeonyeok-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  color: #c9a227;
+  font-weight: bold;
+}
+
+/* VISION 펼침 전용 – 리스트 글자 크기 조절 */
+.vision-yeonyeok-list .about-yeonyeok-list {
+  font-size: 1.2rem;
+  white-space: nowrap;
+  line-height: 2;
+  font-weight: 600;
+}
+
+.about-right-photo {
+  flex: 1;
+  max-width: 50%;
+  transition: transform 0.45s ease;
+}
+
+.about-right-photo.expanded {
+  transform: scale(1.12);
+}
+
+@media (max-width: 768px) {
+  .about-sticky-inner {
+    padding-top: 64px;
+  }
+  .about-expand-row {
+    flex-direction: column;
+  }
+  .about-right-photo {
+    max-width: 100%;
+    min-height: 280px;
+  }
+  .about-right-photo.expanded {
+    transform: scale(1.05);
+  }
+}
+
+/* ========== Ref design: Mid tagline ========== */
+.ref-mid-tagline {
+  background-color: #fff;
+  color: #000;
+  text-align: center;
+  padding: 150px 20px;
+}
+
+.ref-mid-tagline h2 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+/* ========== Ref design: Our Service ========== */
+.ref-our-service-section {
+  padding: 100px 10%;
+  background-color: #050505;
+  color: #fff;
+}
+
+.ref-service-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.ref-service-header h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.ref-service-list {
+  list-style: none;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.ref-service-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 0;
+  border-bottom: 1px solid #333;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ref-service-item:hover,
+.ref-service-item.ref-active {
+  color: #fff;
+}
+
+.ref-service-item:hover .ref-service-name,
+.ref-service-item:hover .ref-service-desc,
+.ref-service-item.ref-active .ref-service-name {
+  color: #fff;
+}
+
+.ref-service-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #888;
+  transition: color 0.3s ease;
+}
+
+.ref-service-item.ref-active .ref-service-name {
+  color: #fff;
+}
+
+.ref-service-desc {
+  color: #666;
+  transition: color 0.3s ease;
+}
+
+/* ========== Ref: News / Contact sections (light) ========== */
+.ref-section-light {
+  background-color: #f8f8f8;
+  color: #000;
+  padding: 80px 5%;
+}
+
+.ref-section-light h2,
+.ref-section-light h3 {
+  color: #1e3a5f;
+}
+
+/* ========== Ref responsive ========== */
+@media (max-width: 768px) {
+  .ref-hero-content h1 {
+    font-size: 2.5rem;
+  }
+
+  .ref-showcase-row,
+  .ref-showcase-row.ref-reverse {
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+
+  .ref-showcase-image {
+    height: 300px;
+    width: 100%;
+  }
+
+  .ref-grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .ref-grid-item {
+    border-right: none;
+  }
+
+  .ref-grid-item:nth-child(3) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .ref-header {
+    padding: 16px 20px;
+  }
+
+  .ref-header .ref-nav a {
+    margin: 0 8px;
+    font-size: 12px;
+  }
 }

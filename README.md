@@ -148,3 +148,17 @@ npm run start
 ## 라이선스
 
 ISC
+
+### 포트
+11115
+
+### 도커 실행 구문
+docker run --rm -it \
+  -p 11115:11115 \
+  -p 10023:10023 \
+  -v $PWD:/app -w /app \
+  --env-file /app/server/.env \
+  -e HOST=0.0.0.0 \
+  -e NODE_ENV=development \
+  node:20-alpine \
+  sh -lc 'npm ci && cd client && npm ci && cd ../server && npm ci && cd .. && npx concurrently "cd client && npm run dev -- --host 0.0.0.0 --port 11115” "cd server && PORT=$PORT npm run dev"'

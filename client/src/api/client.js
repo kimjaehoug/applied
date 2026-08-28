@@ -38,3 +38,44 @@ export async function uploadNewsImage(file) {
   if (!res.ok) throw new Error(data.message || res.statusText)
   return data
 }
+
+export async function uploadMemberImage(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+  const res = await fetch(`${BASE}/api/uploads/members`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.message || res.statusText)
+  return data
+}
+
+export async function getNewsList() {
+  const { data } = await api('/api/news')
+  return data || []
+}
+
+export async function createNews({ title, body, source, date, imageFile, imageUrl }) {
+  const formData = new FormData()
+  formData.append('title', title)
+  formData.append('body', body || '')
+  formData.append('source', source || '')
+  formData.append('date', date || '')
+  if (imageFile) formData.append('image', imageFile)
+  else if (imageUrl) formData.append('imageUrl', imageUrl)
+
+  const res = await fetch(`${BASE}/api/news`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  })
+  const data = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(data.message || res.statusText)
+  return data
+}
+
+export async function deleteNews(id) {
+  return api(`/api/news/${id}`, { method: 'DELETE' })
+}

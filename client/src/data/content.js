@@ -31,20 +31,109 @@ export const professor = {
   ],
 }
 
+export const research = [
+  {
+    title: "시계열 데이터 분석 & 예측",
+    sections: [
+      {
+        subtitle: "주요기술",
+        items: [
+          "LSTM, AutoRegressive 모델",
+          "시계열 예측 알고리즘"
+        ]
+      },
+      {
+        subtitle: "응용분야",
+        items: [
+          "환경 데이터 분석",
+          "웨어러블 디바이스로 수집된 건강 데이터의 예측 분석"
+        ]
+      }
+    ]
+  },
+  {
+    title : "다중 모달 데이터 통합 및 분석",
+    sections: [
+      {
+        subtitle: "주요기술",
+        items: [
+          "CNN, AutoEncoder",
+          "다중 모달 학습 알고리즘"
+        ]
+      },
+      {
+        subtitle: "응용분야",
+        items: [
+          "이미지, 텍스트, 모션, 신체 시그널 등",
+          "센서 데이터 통합 분석을 통한 환경 및 건강 데이터 처리"
+        ]
+      }
+    ]
+  },
+  {
+    title: "딥러닝 및 전이학습",
+    sections: [
+      {
+        subtitle: "주요기술",
+        items: [
+          "전이 학습과 Learning Without Forgetting COVID-19 진단",
+          "다양한 상황에서 머신러닝 최적화"
+        ]
+      },
+      {
+        subtitle: "응용분야",
+        items: [
+          "의료 영상 분석, 질병 예측 및 진단",
+          "스마트 헬스케어 및 원격 진료 시스템",
+          "스마트 시티 및 자율 시스템"
+        ]
+      }
+    ]
+  },
+  {
+    title: "자연어 처리(NLP) & 중소형언어모델(SLM)",
+    sections: [
+      {
+        subtitle: "주요기술",
+        items: [
+          "BERT, BiLSTM, Transformer, sLLM",
+          "최신 딥러닝 모델을 활용한 자연어 처리"
+        ]
+      },
+      {
+        subtitle: "응용분야",
+        items: [
+          "SLM 기반의 의료 진단 보고서 분석",
+          "이미지와 텍스트 결합을 통한 정보 추론",
+          "대규모 텍스트 데이터 분석 및 분류"
+        ]
+      }
+    ]
+  }
+]
+
+export const vision ={
+  content1: "암, 알츠하이머 등 주요 질병 진단 및 예측 알고리즘 개발",
+  content2: "의료영상데이터(MRI,CT)를 활용한 진단 알고리즘 개선 및 정확도 향상",
+  content3: "빅데이터 및 인공지능을 활용한 정밀 의학 연구",
+  content4: "피부 질환 진단을 위한 주의 메커니즘 기반 딥러닝 모델 개발",
+  content5: "COVID-19 감염 진단을 위한 전이 학습 및 학습 유지 기법 적용"
+}
+
 export const news = [
   {
     date: '25.11.02',
     title: 'AI, 감염병 대응의 판 바꾼다… 전북대, 의료 인공지능 연구 본격화',
     source: '전민일보 등',
     body: "전북대학교 적응형AI연구실은 오는 3일 오후 4시 30분 인문사회관 208호에서 '감염병 진단·치료 AI 활용 세미나'를 개최한다.",
-    image: '',
+    image: '/image/news/1.png',
   },
   {
     date: '25.10.26',
     title: "전북대 조재혁 교수, 스탠퍼드대학 '세계 상위 2%'연구자 선정",
     source: '전라일보, 전주일보, 뉴스1 등',
     body: "전북대학교 조재혁 교수가 스탠퍼드대학교의 엘스비어(Elsevier)가 발표한 '세계 상위 2% 연구자'에 선정됐다.",
-    image: '',
+    image: '/image/news/2.png',
   },
   {
     date: '25.09.30',
@@ -95,18 +184,18 @@ export const researchers = [
 ]
 
 export const students = [
-  { name: 'Seohyun Yoo', role: 'PhD Student', period: '2022 Sep-', research: 'Natural Language Processing, Artificial Intelligence, Machine Learning, Meta-heuristics, Deep Learning, Environmental Studies' },
-  { name: 'Shi Ming', role: 'PhD Student', period: '2024 Sep-', research: 'Graph Neural Network(including Application), Combinatorial Optimization' },
-  { name: 'Joonseo Hyeon', role: 'Integrated PhD Student', period: '2025 Mar-', research: 'Natural Language Processing, Multimodal Model, Vision Language Model' },
-  { name: 'Yeon Ho Jo', role: 'Integrated PhD Student', period: '2026 Feb-', research: 'Natural Language Processing, AI Agent, Machine Learning, Deep Learning' },
-  { name: 'Sharifov Suhrob', role: 'Master Student', period: '2025 Sep-', research: 'Natural Language Processing, Conversational AI' },
-  { name: 'Jaehong Kim', role: 'Integrated Master Student', period: '2026 Feb-', research: 'Time-Series Forecasting' },
-  { name: 'Yewon Kwon', role: 'Undergraduate Assistant', period: '2024 May-', research: '' },
-  { name: 'Yunsu Kim', role: 'Undergraduate Assistant', period: '2024 Sep-', research: '' },
-  { name: 'Jimin Kwon', role: 'Undergraduate Assistant', period: '2025 Mar-', research: 'Efficient AI, AI Miniaturization' },
-  { name: 'Suyeong Yoon', role: 'Undergraduate Assistant', period: '2025 Jun-', research: '' },
-  { name: 'Seojin Bae', role: 'Undergraduate Assistant', period: '2025 Jun-', research: '' },
-  { name: 'Jinwoo Jang', role: 'Undergraduate Assistant', period: '2025 Sep-', research: '' },
+  { name: 'Seohyun Yoo', role: 'PhD Student', period: '2022 Sep-', research: 'Natural Language Processing, Artificial Intelligence, Machine Learning, Meta-heuristics, Deep Learning, Environmental Studies' , profile_image:""},
+  { name: 'Shi Ming', role: 'PhD Student', period: '2024 Sep-', research: 'Graph Neural Network(including Application), Combinatorial Optimization' , profile_image:""},
+  { name: 'Joonseo Hyeon', role: 'Integrated PhD Student', period: '2025 Mar-', research: 'Natural Language Processing, Multimodal Model, Vision Language Model' , profile_image:""},
+  { name: 'Yeon Ho Jo', role: 'Integrated PhD Student', period: '2026 Feb-', research: 'Natural Language Processing, AI Agent, Machine Learning, Deep Learning' , profile_image:""},
+  { name: 'Sharifov Suhrob', role: 'Master Student', period: '2025 Sep-', research: 'Natural Language Processing, Conversational AI' , profile_image:""},
+  { name: 'Jaehong Kim', role: 'Integrated Master Student', period: '2026 Feb-', research: 'Time-Series Forecasting' , profile_image:"" },
+  { name: 'Yewon Kwon', role: 'Undergraduate Assistant', period: '2024 May-', research: '' , profile_image:""},
+  { name: 'Yunsu Kim', role: 'Undergraduate Assistant', period: '2024 Sep-', research: '' , profile_image:""},
+  { name: 'Jimin Kwon', role: 'Undergraduate Assistant', period: '2025 Mar-', research: 'Efficient AI, AI Miniaturization' , profile_image:""},
+  { name: 'Suyeong Yoon', role: 'Undergraduate Assistant', period: '2025 Jun-', research: '' , profile_image:""},
+  { name: 'Seojin Bae', role: 'Undergraduate Assistant', period: '2025 Jun-', research: '' , profile_image:""},
+  { name: 'Jinwoo Jang', role: 'Undergraduate Assistant', period: '2025 Sep-', research: '' , profile_image:""},
 ]
 
 export const alumni = [
