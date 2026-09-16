@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.js'
 import contentRoutes from './routes/content.js'
 import uploadRoutes from './routes/upload.js'
 import newsRoutes from './routes/news.js'
+import contactRoutes from './routes/contact.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -17,11 +18,10 @@ const __dirname = path.dirname(__filename)
 
 app.use(cors({
   origin: (origin, cb) => {
-    // 개발 환경: 다양한 호스트/포트(예: localhost, 0.0.0.0, 내부 IP)에서 접속 가능하도록 허용
     if (isDev) return cb(null, true)
 
     const allowed = (process.env.FRONT_ORIGIN || '').trim()
-    if (!origin) return cb(null, true) // curl/postman 등
+    if (!origin) return cb(null, true)
     if (allowed && origin === allowed) return cb(null, true)
     return cb(new Error('Not allowed by CORS'))
   },
@@ -40,23 +40,13 @@ app.use(session({
   },
 }))
 
-// 정적 업로드 파일 서빙
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
-
-// 문의 메일 API
-app.post('/api/contact', (req, res) => {
-  const { name, email, subject, message } = req.body
-  if (!name || !email || !subject || !message) {
-    return res.status(400).json({ ok: false, message: '필수 항목을 입력해 주세요.' })
-  }
-  console.log('Contact form:', { name, email, subject, message })
-  res.json({ ok: true, message: '문의가 접수되었습니다.' })
-})
 
 app.use('/api/auth', authRoutes)
 app.use('/api/content', contentRoutes)
 app.use('/api/uploads', uploadRoutes)
 app.use('/api/news', newsRoutes)
+app.use('/api/contact', contactRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)

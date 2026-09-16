@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useLocale } from '../i18n/LocaleContext'
 
 export default function NewsCarousel({ items, isAdmin, onDelete }) {
+  const { t } = useLocale()
   const list = Array.isArray(items) ? items : []
   const [index, setIndex] = useState(0)
 
@@ -18,67 +20,45 @@ export default function NewsCarousel({ items, isAdmin, onDelete }) {
   const current = list[index]
 
   return (
-    <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex flex-col md:flex-row">
-      {/* 이미지 영역 (좌측) */}
-      <div className="relative w-full md:w-1/2 h-72 sm:h-80 md:h-[26rem] lg:h-[30rem] bg-gray-100 overflow-hidden">
+    <div className="news-carousel">
+      <div className="news-carousel-media">
         <div
-          className="flex w-full h-full transition-transform duration-500 ease-out"
+          className="news-carousel-track"
           style={{ transform: `translateX(-${index * 100}%)` }}
         >
           {list.map((item, i) => (
-            <div key={i} className="w-full h-full shrink-0">
+            <div key={i} className="news-carousel-slide">
               {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover"
-                />
+                <img src={item.image} alt={item.title} />
               )}
             </div>
           ))}
         </div>
         {list.length > 1 && (
           <>
-            <button
-              type="button"
-              onClick={handlePrev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center text-sm hover:bg-black/60"
-            >
+            <button type="button" className="news-nav news-nav-prev" onClick={handlePrev} aria-label="Previous">
               ‹
             </button>
-            <button
-              type="button"
-              onClick={handleNext}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 text-white flex items-center justify-center text-sm hover:bg-black/60"
-            >
+            <button type="button" className="news-nav news-nav-next" onClick={handleNext} aria-label="Next">
               ›
             </button>
           </>
         )}
       </div>
-
-      {/* 텍스트 영역 (우측) */}
-      <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
-        <p className="text-sm text-jbnu-navy font-medium">
-          {current.date} · {current.source}
-        </p>
-        <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 mt-2">
-          {current.title}
-        </h3>
-        <p className="text-gray-600 mt-3 leading-relaxed">
-          {current.body}
-        </p>
+      <div className="news-carousel-body">
+        <p className="news-date">{current.date}</p>
+        <h3>{current.title}</h3>
+        {current.source && <p className="news-source">{current.source}</p>}
+        {current.body && <p className="news-body">{current.body}</p>}
         {list.length > 1 && (
-          <div className="mt-4 flex items-center justify-center md:justify-start gap-2">
+          <div className="news-dots">
             {list.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => goTo(i)}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  i === index ? 'bg-jbnu-navy' : 'bg-gray-300 hover:bg-gray-400'
-                }`}
-                aria-label={`뉴스 ${i + 1}로 이동`}
+                className={i === index ? 'is-active' : ''}
+                aria-label={`Go to news ${i + 1}`}
               />
             ))}
           </div>
@@ -87,13 +67,12 @@ export default function NewsCarousel({ items, isAdmin, onDelete }) {
           <button
             type="button"
             onClick={() => onDelete?.(current.id)}
-            className="mt-4 self-start px-4 py-2 bg-red-600 text-white text-sm rounded-lg font-medium hover:bg-red-700"
+            className="news-delete"
           >
-            이 뉴스 삭제
+            {t('news_delete')}
           </button>
         )}
       </div>
     </div>
   )
 }
-

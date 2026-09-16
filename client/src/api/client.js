@@ -14,15 +14,17 @@ export async function api(path, options = {}) {
   return data
 }
 
-export async function getContent(page) {
-  const { data } = await api(`/api/content?page=${encodeURIComponent(page)}`)
+export async function getContent(page, locale = 'en') {
+  const { data } = await api(
+    `/api/content?page=${encodeURIComponent(page)}&locale=${encodeURIComponent(locale)}`
+  )
   return data || {}
 }
 
-export async function putContent(page, section, content) {
+export async function putContent(page, section, content, locale = 'en') {
   return api('/api/content', {
     method: 'PUT',
-    body: JSON.stringify({ page, section, content }),
+    body: JSON.stringify({ page, section, content, locale }),
   })
 }
 

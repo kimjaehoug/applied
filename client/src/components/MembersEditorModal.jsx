@@ -67,7 +67,7 @@ export default function MembersEditorModal({ title, data, onSave, onCancel, savi
           {items.map((m, index) => (
             <div key={index} className="p-4 border border-gray-200 rounded-xl bg-gray-50/70 space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1e3a5f] to-[#c9a227] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1e3a5f] to-[#6fa99a] flex-shrink-0 flex items-center justify-center overflow-hidden">
                   {m.profile_image ? (
                     <img src={m.profile_image} alt={m.name || 'member'} className="w-full h-full object-cover" />
                   ) : (

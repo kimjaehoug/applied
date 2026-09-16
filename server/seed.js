@@ -109,10 +109,11 @@ async function run() {
 
     const hash = await bcrypt.hash(defaultAdmin.password, 10)
     await conn.query(
-      'INSERT IGNORE INTO admins (username, password_hash) VALUES (?, ?)',
+      `INSERT INTO admins (username, password_hash) VALUES (?, ?)
+       ON DUPLICATE KEY UPDATE password_hash = VALUES(password_hash)`,
       [defaultAdmin.username, hash]
     )
-    console.log('Admin created (or already exists):', defaultAdmin.username, '/', defaultAdmin.password)
+    console.log('Admin ready:', defaultAdmin.username, '/', defaultAdmin.password)
 
     const contentRows = []
     const pageSections = [

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 700" role="img" aria-label="Interactive neural orbit visualization">
+  <defs>
+    <radialGradient id="core" cx="45%" cy="40%"><stop stop-color="#f4fffc"/><stop offset=".22" stop-color="#b6d7cf"/><stop offset=".58" stop-color="#5f9f91" stop-opacity=".72"/><stop offset="1" stop-color="#10221f" stop-opacity="0"/></radialGradient>
+    <linearGradient id="orbit" x1="0" x2="1"><stop stop-color="#d7eee8" stop-opacity=".12"/><stop offset=".45" stop-color="#b6d7cf"/><stop offset="1" stop-color="#5f9f91" stop-opacity=".12"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <circle cx="450" cy="350" r="270" fill="url(#core)" opacity=".5">
+    <animate attributeName="r" values="250;280;250" dur="5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values=".34;.58;.34" dur="5s" repeatCount="indefinite"/>
+  </circle>
+  <g fill="none" stroke="url(#orbit)" stroke-width="2">
+    <ellipse cx="450" cy="350" rx="330" ry="120" transform="rotate(-18 450 350)"><animateTransform attributeName="transform" type="rotate" from="-18 450 350" to="342 450 350" dur="24s" repeatCount="indefinite"/></ellipse>
+    <ellipse cx="450" cy="350" rx="305" ry="142" transform="rotate(35 450 350)"><animateTransform attributeName="transform" type="rotate" from="35 450 350" to="-325 450 350" dur="30s" repeatCount="indefinite"/></ellipse>
+    <ellipse cx="450" cy="350" rx="280" ry="190" transform="rotate(78 450 350)"><animateTransform attributeName="transform" type="rotate" from="78 450 350" to="438 450 350" dur="36s" repeatCount="indefinite"/></ellipse>
+  </g>
+  <g stroke="#b6d7cf" stroke-width="1" opacity=".55">
+    <path d="M450 350 190 250M450 350 720 220M450 350 690 520M450 350 270 545M450 350 560 100"/>
+  </g>
+  <g fill="#d7eee8" filter="url(#glow)">
+    <circle cx="450" cy="350" r="34"><animate attributeName="r" values="27;38;27" dur="3.4s" repeatCount="indefinite"/></circle>
+    <circle cx="190" cy="250" r="8"><animate attributeName="cy" values="250;224;250" dur="4s" repeatCount="indefinite"/></circle>
+    <circle cx="720" cy="220" r="9"><animate attributeName="cx" values="720;745;720" dur="5s" repeatCount="indefinite"/></circle>
+    <circle cx="690" cy="520" r="7"><animate attributeName="cy" values="520;544;520" dur="4.5s" repeatCount="indefinite"/></circle>
+    <circle cx="270" cy="545" r="9"><animate attributeName="cx" values="270;248;270" dur="5.4s" repeatCount="indefinite"/></circle>
+    <circle cx="560" cy="100" r="6"><animate attributeName="cy" values="100;78;100" dur="3.8s" repeatCount="indefinite"/></circle>
+  </g>
+  <g fill="none" stroke="#d7eee8" opacity=".5">
+    <circle cx="450" cy="350" r="72"><animate attributeName="r" values="54;105;54" dur="4.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;0;.7" dur="4.6s" repeatCount="indefinite"/></circle>
+    <circle cx="450" cy="350" r="72"><animate attributeName="r" values="54;105;54" dur="4.6s" begin="2.3s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;0;.7" dur="4.6s" begin="2.3s" repeatCount="indefinite"/></circle>
+  </g>
+</svg>

@@ -4,11 +4,25 @@ import { query } from '../db.js'
 
 const router = Router()
 
+function envAdminMatch(username, password) {
+  const envUser = (process.env.ADMIN_USERNAME || 'admin').trim()
+  const envPass = (process.env.ADMIN_PASSWORD || 'admin123').trim()
+  return username === envUser && password === envPass
+}
+
 router.post('/login', async (req, res) => {
   const { username, password } = req.body || {}
   if (!username || !password) {
     return res.status(400).json({ ok: false, message: '아이디와 비밀번호를 입력해 주세요.' })
   }
+
+  // Env admin always available (useful when MySQL is down / not seeded yet)
+  if (envAdminMatch(String(username).trim(), String(password))) {
+    req.session.adminId = Number(process.env.ADMIN_ID || 1)
+    req.session.username = String(username).trim()
+    return res.json({ ok: true, user: { id: req.session.adminId, username: req.session.username } })
+  }
+
   try {
     const rows = await query('SELECT id, username, password_hash FROM admins WHERE username = ?', [username])
     if (!rows.length) {

@@ -1,68 +1,53 @@
 import { useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { useLocale } from '../i18n/LocaleContext'
 
 export default function EditableSection({ title, sectionKey, content, onSave, children, renderEditor }) {
   const { isAdmin } = useAuth()
-  const { pathname, hash } = useLocation()
+  const { t, locale } = useLocale()
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
 
-  // 관리자라면 어떤 페이지/섹션이든 편집 가능하게 통일
   const canEdit = isAdmin
+  const localeLabel = locale === 'ko' ? 'KO' : 'EN'
 
   const handleSave = async (newContent) => {
     setSaving(true)
+    setError('')
     try {
       await onSave(sectionKey, newContent)
       setEditing(false)
+    } catch (e) {
+      setError(e.message || t('edit_save_fail'))
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <section className="relative group">
+    <section className="relative group editable-section">
       {(title || canEdit) && (
-        <div className="mb-4 flex items-center justify-between">
-          {title && <h2 className="text-2xl font-bold text-jbnu-navy">{title}</h2>}
+        <div className="mb-4 flex items-center justify-between gap-3">
+          {title && <h2 className="text-2xl font-bold text-[var(--ink)]">{title}</h2>}
           {canEdit && !editing && (
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-gray-300 bg-white/90 text-xs font-medium text-gray-700 shadow-sm hover:bg-jbnu-navy hover:text-white hover:border-jbnu-navy transition-all duration-150"
-            >
-              <span className="inline-block w-3.5 h-3.5">
-                <svg
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-full h-full"
-                >
-                  <path
-                    d="M4 13.5L4.5 10.5L11.5 3.5L14.5 6.5L7.5 13.5L4 13.5Z"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M11 4L14 7"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </span>
-              편집
+            <button type="button" onClick={() => setEditing(true)} className="edit-chip">
+              {t('edit')} · {localeLabel}
             </button>
           )}
         </div>
       )}
 
+      {canEdit && editing && (
+        <p className="edit-locale-hint">
+          {t('edit_locale_hint')} <strong>{localeLabel}</strong>
+        </p>
+      )}
+
+      {error && <p className="form-err mb-3">{error}</p>}
+
       {editing && renderEditor ? (
-        <div className="border-2 border-jbnu-gold/50 rounded-xl p-4 bg-amber-50/50">
+        <div className="edit-panel">
           {renderEditor(content, handleSave, { saving, onCancel: () => setEditing(false) })}
         </div>
       ) : (

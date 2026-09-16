@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import SectionTitle from '../components/SectionTitle'
 import EditableSection from '../components/EditableSection'
-import EditJsonModal from '../components/EditJsonModal'
 import MembersEditorModal from '../components/MembersEditorModal'
 import ResearchEditorModal from '../components/ResearchEditorModal'
 import OpeningsEditorModal from '../components/OpeningsEditorModal'
@@ -10,40 +9,40 @@ import ProfessorEditorModal from '../components/ProfessorEditorModal'
 import NewsCarousel from '../components/NewsCarousel'
 import { useContent } from '../contexts/ContentContext'
 import { useAuth } from '../contexts/AuthContext'
-import { research as researchTopics, vision as visionContent } from '../data/content'
+import { useLocale } from '../i18n/LocaleContext'
+import {
+  researchByLocale,
+  visionByLocale,
+  localizeNewsItem,
+} from '../i18n/localizedContent'
+import { research as researchKo, vision as visionKo } from '../data/content'
 import { getNewsList, deleteNews } from '../api/client'
 
 function PersonCard({ name, role, period, research, profile_image }) {
   const initial = name?.charAt(0) || '?'
   return (
-    <div className="p-6 bg-white/95 rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#1e3a5f] to-[#c9a227] flex items-center justify-center text-xl font-bold text-white mb-3 shadow-md overflow-hidden">
-        {profile_image ? (
-          <img src={profile_image} alt={name} className="w-full h-full object-cover" />
-        ) : (
-          <span>{initial}</span>
-        )}
+    <article className="member-card">
+      <div className="member-card-top">
+        <div className="member-avatar">
+          {profile_image ? (
+            <img src={profile_image} alt={name} />
+          ) : (
+            <span>{initial}</span>
+          )}
+        </div>
+        <div className="member-card-identity">
+          <h3>{name}</h3>
+          <p className="member-role">{role}</p>
+        </div>
       </div>
-      <h3 className="text-lg font-semibold text-gray-900">{name}</h3>
-      <div className="mt-1 flex flex-wrap items-center gap-2 text-sm">
-        <span className="inline-flex px-2.5 py-0.5 rounded-full bg-[#1e3a5f]/10 text-xs font-semibold text-[#1e3a5f]">
-          {role}
-        </span>
-        <span className="text-xs text-gray-500">{period}</span>
-      </div>
-      {research && <p className="text-sm text-gray-600 mt-3 leading-relaxed">{research}</p>}
-    </div>
+      {period && <p className="member-period">{period}</p>}
+      {research && <p className="member-research">{research}</p>}
+    </article>
   )
 }
 
-const gridItems = [
-  { title: 'AI Research', desc: 'SOTA AI · 의료·환경 데이터' },
-  { title: 'Industry Collaboration', desc: '산학협력 및 기술이전' },
-  { title: 'Publications', desc: '논문 · 특허 · R&D' },
-  { title: 'R&D Projects', desc: '국가·산업 R&D 과제' },
-]
-
 export default function SinglePage() {
+  const { locale, t } = useLocale()
   const { data: homeData, loading: homeLoading, updateSection: updateHome } = useContent('home')
   const { data: researchData, loading: researchLoading, updateSection: updateResearch } = useContent('research')
   const { data: membersData, loading: membersLoading, updateSection: updateMembers } = useContent('members')
@@ -53,6 +52,7 @@ export default function SinglePage() {
   const [newsItems, setNewsItems] = useState([])
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: '', message: '' })
   const [contactStatus, setContactStatus] = useState(null)
+  const [contactFeedback, setContactFeedback] = useState('')
   const [aboutExpanded, setAboutExpanded] = useState(false)
   const [researchExpanded, setResearchExpanded] = useState(false)
   const [visionExpanded, setVisionExpanded] = useState(false)
@@ -65,20 +65,30 @@ export default function SinglePage() {
   }, [])
 
   const handleDeleteNews = async (id) => {
-    if (!window.confirm('이 뉴스를 삭제하시겠습니까?')) return
+    if (!window.confirm(t('news_delete_confirm'))) return
     try {
       await deleteNews(id)
       setNewsItems((prev) => prev.filter((n) => n.id !== id))
     } catch {
-      alert('삭제에 실패했습니다.')
+      alert(t('news_delete_fail'))
     }
   }
 
   const site = homeData.site || {}
+  // Editable CMS content is shown as saved in both locales (UI chrome is translated separately).
   const professor = homeData.professor || {}
-  const news = newsItems.length > 0 ? newsItems : (homeData.news || [])
+  const professorRaw = professor
+
+  const newsRaw = newsItems.length > 0 ? newsItems : (homeData.news || [])
+  const news = newsRaw.map((item) => localizeNewsItem(item, locale))
+
+  const researchTopics = locale === 'en' ? researchByLocale.en : researchKo
+  const visionContent = locale === 'en' ? visionByLocale.en : visionKo
+
   const researchHighlights = researchData.researchHighlights || {}
+  const researchHighlightsRaw = researchHighlights
   const { publications = [], patent = [], projects = [] } = researchHighlights
+
   const researchers = membersData.researchers || []
   const students = membersData.students || []
   const alumni = membersData.alumni || []
@@ -86,6 +96,13 @@ export default function SinglePage() {
   const { positions = [], benefits = [], apply = [], contact: contactText = '' } = openings
   const contact = contactData.contact || {}
   const loading = homeLoading
+
+  const gridItems = [
+    { title: t('grid_ai'), desc: t('grid_ai_desc'), image: '/image/card-ai-research.png' },
+    { title: t('grid_collab'), desc: t('grid_collab_desc'), image: '/image/card-technology-transfer.png' },
+    { title: t('grid_pub'), desc: t('grid_pub_desc'), image: '/image/tile-publications.svg' },
+    { title: t('grid_rnd'), desc: t('grid_rnd_desc'), image: '/image/card-rnd.png' },
+  ]
 
   useEffect(() => {
     if (loading) return
@@ -116,7 +133,7 @@ export default function SinglePage() {
       const vh = window.innerHeight
       const inStickyRange = rect.top <= 0 && rect.bottom > vh
       const scrollInto = -rect.top
-      setResearchExpanded(inStickyRange && scrollInto > 30 && scrollInto < vh*0.9 )
+      setResearchExpanded(inStickyRange && scrollInto > 30 && scrollInto < vh * 0.9)
     }
     updateExpanded()
     window.addEventListener('scroll', updateExpanded, { passive: true })
@@ -150,6 +167,7 @@ export default function SinglePage() {
   const handleContactSubmit = async (e) => {
     e.preventDefault()
     setContactStatus('sending')
+    setContactFeedback('')
     try {
       const res = await fetch('/api/contact', {
         method: 'POST',
@@ -157,77 +175,106 @@ export default function SinglePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(contactForm),
       })
-      if (res.ok) {
+      const data = await res.json().catch(() => ({}))
+      if (res.ok && data.ok !== false) {
         setContactStatus('success')
+        setContactFeedback(data.message || t('form_success'))
         setContactForm({ name: '', email: '', subject: '', message: '' })
-      } else setContactStatus('error')
+      } else {
+        setContactStatus('error')
+        setContactFeedback(data.message || t('form_error'))
+      }
     } catch {
       setContactStatus('error')
+      setContactFeedback(t('form_error'))
     }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-400">
-        로딩 중...
+      <div className="min-h-screen flex items-center justify-center text-[var(--ink-soft)]">
+        {t('loading')}
       </div>
     )
   }
 
-  const topicImages = ['/image/RESEARCH.png', '/image/VISION.png', '/image/environment.png']
+  const topicImages = ['/image/research-field-plate.svg', '/image/VISION.png', '/image/environment.png']
+  const midLines = t('mid_tagline').split('\n')
+  const researchSubLines = t('research_intro_sub').split('\n')
 
   return (
-    <div>
-      {/* Hero - Ref style */}
-      <section id="hero" className="ref-hero scroll-mt-20">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        >
+    <div className="single-page" lang={locale}>
+      <section
+        id="hero"
+        className="ref-hero scroll-mt-20"
+        onMouseMove={(event) => {
+          const rect = event.currentTarget.getBoundingClientRect()
+          const x = (event.clientX - rect.left) / rect.width
+          const y = (event.clientY - rect.top) / rect.height
+          event.currentTarget.style.setProperty('--mx', `${(x - 0.5) * 18}px`)
+          event.currentTarget.style.setProperty('--my', `${(y - 0.5) * 14}px`)
+          event.currentTarget.style.setProperty('--rx', `${(0.5 - x) * 11}deg`)
+          event.currentTarget.style.setProperty('--ry', `${(0.5 - y) * 9}deg`)
+        }}
+        onMouseLeave={(event) => {
+          event.currentTarget.style.setProperty('--mx', '0px')
+          event.currentTarget.style.setProperty('--my', '0px')
+          event.currentTarget.style.setProperty('--rx', '0deg')
+          event.currentTarget.style.setProperty('--ry', '0deg')
+        }}
+      >
+        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover z-0">
           <source src="/video/background_video.mp4" type="video/mp4" />
         </video>
         <div className="ref-hero-content">
+          <p className="hero-eyebrow">{t('hero_eyebrow')}</p>
           <h1>
-            We Prove
+            {t('hero_line1')}
             <br />
-            the Power of AI
+            {t('hero_line2')}
           </h1>
           <p className="ref-hero-sub">
             {site.name} · {site.dept}
           </p>
+          <div className="hero-cta-row">
+            <a href="#research" className="hero-cta hero-cta-primary">{t('nav_research')}</a>
+            <a href="#contact" className="hero-cta hero-cta-ghost">{t('nav_contact')}</a>
+          </div>
+        </div>
+        <div className="hero-orbit-visual" aria-hidden="true">
+          <img src="/image/hero-neural-orbit.svg" alt="" />
+          <span className="hero-orbit-label">{t('hero_orbit')}</span>
         </div>
       </section>
 
-      {/* Dark grid - Ref style */}
       <section className="ref-dark-grid-section">
         <div className="ref-grid-container">
           {gridItems.map((item, i) => (
             <div key={i} className="ref-grid-item">
-              <h3 style={{ fontWeight: 'bold' }}>{item.title}</h3>
-              <p>{item.desc}</p>
+              <img className="ref-grid-image" src={item.image} alt="" loading="lazy" decoding="async" />
+              <div className="ref-grid-copy">
+                <h3>{item.title}</h3>
+                <p>{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
         <div className="ref-transition-text">
-          <p style={{ fontWeight: 'bold' }}>
-            그리고
+          <p>
+            {t('bridge_line1')}
             <br />
-            인공지능 연구로 산업과 사회에 기여합니다
+            {t('bridge_line2')}
           </p>
         </div>
       </section>
 
-      {/* About / CHIEF: 스크롤 구간에서 걸리며 연역 표시, 사진 확대 (관리자 편집 가능) */}
       <EditableSection
         sectionKey="professor"
-        content={professor}
+        content={professorRaw}
         onSave={updateHome}
         renderEditor={(content, onSave, { saving, onCancel }) => (
           <ProfessorEditorModal
-            title="교수님 정보 (이름 / 경력 / 주요 활동)"
+            title="Professor"
             data={content}
             onSave={onSave}
             onCancel={onCancel}
@@ -245,8 +292,10 @@ export default function SinglePage() {
             <div className="about-expand-row">
               <div className={`about-left-col ${aboutExpanded ? 'expanded' : ''}`}>
                 <div className="about-left-intro">
-                  <span className="ref-highlight">CHIEF</span>
-                  <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{professor.name} / {professor.nameKo}</h1>
+                  <h1>
+                    <span className="professor-name-en">{professor.name}</span>
+                    {locale === 'ko' && <span className="professor-name-ko">{professor.nameKo}</span>}
+                  </h1>
                   {!aboutExpanded && (
                     <p>
                       {professor.title}, Applied AI Lab
@@ -257,7 +306,7 @@ export default function SinglePage() {
                 </div>
                 {aboutExpanded && (
                   <div className="about-yeonyeok-below chief-yeonyeok-list">
-                    <h3 className="about-yeonyeok-title">경력</h3>
+                    <h3 className="about-yeonyeok-title">{t('career_heading')}</h3>
                     <ul className="about-yeonyeok-list">
                       {(professor.history || []).map((h, i) => (
                         <li key={i}>
@@ -265,7 +314,7 @@ export default function SinglePage() {
                         </li>
                       ))}
                     </ul>
-                    <h3 className="about-yeonyeok-title">주요 활동</h3>
+                    <h3 className="about-yeonyeok-title">{t('activity_heading')}</h3>
                     <ul className="about-yeonyeok-list">
                       {(professor.biography || []).slice(1).map((item, i) => (
                         <li key={i}>{item}</li>
@@ -280,7 +329,7 @@ export default function SinglePage() {
                   backgroundImage: "url('/image/professor.png')",
                   backgroundSize: 'contain',
                   backgroundColor: '#f8f8f8',
-                  backgroundPosition: 'center',
+                  backgroundPosition: '42% center',
                   backgroundRepeat: 'no-repeat',
                 }}
               />
@@ -289,7 +338,6 @@ export default function SinglePage() {
         </section>
       </EditableSection>
 
-      {/* Research: CHIEF와 동일한 스크롤 구간 스티키 구조 */}
       <section
         id="research-intro"
         ref={researchSectionRef}
@@ -302,25 +350,23 @@ export default function SinglePage() {
               className={`ref-showcase-image about-right-photo ${researchExpanded ? 'expanded' : ''}`}
               style={{
                 backgroundImage: `url('${topicImages[0]}')`,
-                backgroundSize: 'contain',
-                backgroundColor: '#f8f8f8',
+                backgroundSize: 'cover',
+                backgroundColor: '#dcece8',
                 backgroundPosition: 'center',
                 backgroundRepeat: 'no-repeat',
               }}
             />
             <div className={`about-left-col ${researchExpanded ? 'expanded' : ''}`}>
               <div className="about-left-intro">
-                <span className="ref-highlight">RESEARCH</span>
-                <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>국내 최초 적용형 AI 연구</h1>
+                <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{t('research_intro_title')}</h1>
                 {!researchExpanded && (
                   <p>
-                    SOTA AI, 의료·환경 데이터 분석
+                    {researchSubLines[0]}
                     <br />
-                    논문, 특허, R&D 과제 수행
+                    {researchSubLines[1]}
                   </p>
                 )}
               </div>
-              {/* 스크롤 구간에서만 표시: 4분면 그리드(4개 내용을 감싸는 컨테이너 1개) */}
               {researchExpanded && (
                 <div className="about-yeonyeok-below research-quadrants">
                   {(researchTopics || []).slice(0, 4).map((item, idx) => (
@@ -345,7 +391,6 @@ export default function SinglePage() {
         </div>
       </section>
 
-      {/* VISION: 스크롤 구간 스티키 + content.js vision 데이터 */}
       <section
         id="vision-intro"
         ref={visionSectionRef}
@@ -356,25 +401,15 @@ export default function SinglePage() {
           <div className="about-expand-row">
             <div className={`about-left-col ${visionExpanded ? 'expanded' : ''}`}>
               <div className="about-left-intro">
-                <span className="ref-highlight">VISION</span>
-                <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>Game Changer</h1>
-                {!visionExpanded && (
-                  <p>
-                    시장을 선도하는 AI 연구 기준 제시
-                  </p>
-                )}
-                {/* {!visionExpanded && (
-                  <a href="#openings" className="mt-4 text-[#007bff] font-medium hover:underline">
-                    채용 보기 →
-                  </a>
-                )} */}
+                <h1 style={{ fontWeight: 'bold', fontSize: '2rem' }}>{t('vision_title')}</h1>
+                {!visionExpanded && <p>{t('vision_sub')}</p>}
               </div>
               {visionExpanded && visionContent && (
                 <div className="about-yeonyeok-below vision-yeonyeok-list">
                   <ul className="about-yeonyeok-list">
-                    {['content1', 'content2', 'content3', 'content4', 'content5'].map((key) => (
-                      visionContent[key] && <li key={key}>{visionContent[key]}</li>
-                    ))}
+                    {['content1', 'content2', 'content3', 'content4', 'content5'].map(
+                      (key) => visionContent[key] && <li key={key}>{visionContent[key]}</li>
+                    )}
                   </ul>
                 </div>
               )}
@@ -393,28 +428,24 @@ export default function SinglePage() {
         </div>
       </section>
 
-      {/* Mid tagline - Ref style */}
       <section className="ref-mid-tagline">
-        <h2 style={{ fontWeight: 'bold' }}>
-          최고의 연구 역량에
-          <br />
-          AI 기술을 접목하여
-          <br />
-          새롭고 다양한 가치를 만들어갑니다.
+        <h2>
+          {midLines.map((line, i) => (
+            <span key={i}>
+              {line}
+              {i < midLines.length - 1 && <br />}
+            </span>
+          ))}
         </h2>
       </section>
 
-      {/* News - Light section */}
       <section id="news" className="ref-section-light scroll-mt-24">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-2">
-            <SectionTitle title="NEWS" subtitle="연구실 소식" />
+        <div className="news-section-inner mx-auto">
+          <div className="flex items-center justify-between mb-2 gap-4">
+            <SectionTitle title={t('news_title')} subtitle={t('news_sub')} />
             {isAdmin && (
-              <Link
-                to="/admin/news/add"
-                className="px-5 py-2.5 bg-[#1e3a5f] text-white rounded-lg font-medium hover:opacity-90 text-sm"
-              >
-                + 뉴스 추가
+              <Link to="/admin/news/add" className="action-chip">
+                {t('news_add')}
               </Link>
             )}
           </div>
@@ -422,45 +453,13 @@ export default function SinglePage() {
         </div>
       </section>
 
-      {/* About detail: Biography & History */}
-      {/* <section className="ref-section-light">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-bold text-[#1e3a5f] mb-6">Biography & History</h2>
-          <div className="grid md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">Biography</h3>
-              <ul className="space-y-2 text-gray-700">
-                {(professor.biography || []).map((item, i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-[#c9a227]">•</span>
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">History</h3>
-              <ul className="space-y-3">
-                {(professor.history || []).map((h, i) => (
-                  <li key={i} className="flex flex-col sm:flex-row sm:gap-4">
-                    <span className="font-semibold text-[#1e3a5f] min-w-[120px]">{h.period}</span>
-                    <span className="text-gray-700">{h.desc}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* Research detail (관리자 편집 가능) */}
       <EditableSection
         sectionKey="researchHighlights"
-        content={researchHighlights}
+        content={researchHighlightsRaw}
         onSave={updateResearch}
         renderEditor={(content, onSave, { saving, onCancel }) => (
           <ResearchEditorModal
-            title="Research Highlights (논문 / 특허 / R&D 프로젝트)"
+            title="Research Highlights"
             data={content}
             onSave={onSave}
             onCancel={onCancel}
@@ -468,44 +467,64 @@ export default function SinglePage() {
           />
         )}
       >
-        <section id="research" className="ref-section-light scroll-mt-24">
-          <div className="max-w-6xl mx-auto">
-            <SectionTitle title="Research" subtitle="Applied AI Lab 연구 분야 및 성과" />
+        <section id="research" className="ref-section-light research-outcomes scroll-mt-24">
+          <div className="news-section-inner mx-auto">
+            <SectionTitle title={t('research_title')} subtitle={t('research_sub')} />
+
             {!researchLoading && (
               <>
-                <div className="mb-12">
-                  <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">Recent Publications</h3>
-                  <ul className="space-y-2 text-gray-700">
-                    {publications.map((item, i) => (
-                      <li key={i} className="flex gap-2">
-                        <span className="text-[#c9a227]">·</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                <div className="research-stat-line" aria-label="Research highlights">
+                  <div className="research-stat">
+                    <strong>30+</strong>
+                    <span>{t('research_metric_papers')}</span>
+                  </div>
+                  <div className="research-stat">
+                    <strong>23</strong>
+                    <span>{t('research_metric_patents')}</span>
+                  </div>
+                  <div className="research-stat">
+                    <strong>16</strong>
+                    <span>{t('research_metric_copyrights')}</span>
+                  </div>
                 </div>
-                <div className="mb-12">
-                  <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">Patent & Technology Transfer</h3>
-                  <ul className="space-y-2 text-gray-700">
-                    {patent.map((item, i) => (
-                      <li key={i} className="flex gap-2">
-                        <span className="text-[#c9a227]">·</span>
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+
+                <div className="research-split">
+                  <div className="research-panel">
+                    <h3>{t('pubs_heading')}</h3>
+                    <ol className="research-soft-list">
+                      {publications.map((item, i) => (
+                        <li key={i}>
+                          <span>{String(i + 1).padStart(2, '0')}</span>
+                          <p>{item}</p>
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                  <div className="research-panel">
+                    <h3>{t('patent_heading')}</h3>
+                    <ul className="research-soft-list research-soft-list-dots">
+                      {patent.map((item, i) => (
+                        <li key={i}>
+                          <p>{item}</p>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">R&D Projects</h3>
-                  <div className="space-y-4">
+
+                <div className="research-projects-block">
+                  <h3>{t('projects_heading')}</h3>
+                  <div className="research-project-grid">
                     {projects.map((p, i) => (
-                      <div key={i} className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm">
-                        <p className="text-sm font-semibold text-[#1e3a5f]">{p.period}</p>
-                        <h4 className="text-lg font-semibold text-gray-900 mt-1">{p.title}</h4>
-                        <p className="text-gray-600 mt-1">
-                          {p.org}, {p.budget}
+                      <article key={i} className="research-project-item">
+                        <p className="project-period">{p.period}</p>
+                        <h4>{p.title}</h4>
+                        <p className="research-project-meta">
+                          {p.org}
+                          <span aria-hidden="true"> · </span>
+                          {p.budget}
                         </p>
-                      </div>
+                      </article>
                     ))}
                   </div>
                 </div>
@@ -515,19 +534,17 @@ export default function SinglePage() {
         </section>
       </EditableSection>
 
-      {/* Members */}
-      <section id="members" className="ref-section-light scroll-mt-24">
-        <div className="max-w-6xl mx-auto">
+      <section id="members" className="ref-section-light members-section scroll-mt-24">
+        <div className="news-section-inner mx-auto">
           {!membersLoading && (
             <>
-              {/* RESEARCHERS 편집 가능 */}
               <EditableSection
                 sectionKey="researchers"
                 content={researchers}
                 onSave={updateMembers}
                 renderEditor={(content, onSave, { saving, onCancel }) => (
                   <MembersEditorModal
-                    title="RESEARCHERS (연구원 목록)"
+                    title={t('researchers')}
                     data={content}
                     onSave={onSave}
                     onCancel={onCancel}
@@ -535,9 +552,12 @@ export default function SinglePage() {
                   />
                 )}
               >
-                <div className="mb-16">
-                  <SectionTitle title="RESEARCHERS" />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="members-block">
+                  <div className="members-block-head">
+                    <SectionTitle title={t('researchers')} subtitle={t('researchers_sub')} />
+                    <span className="members-count">{String(researchers.length).padStart(2, '0')}</span>
+                  </div>
+                  <div className="member-grid">
                     {researchers.map((p, i) => (
                       <PersonCard key={i} {...p} />
                     ))}
@@ -545,14 +565,13 @@ export default function SinglePage() {
                 </div>
               </EditableSection>
 
-              {/* STUDENTS 편집 가능 */}
               <EditableSection
                 sectionKey="students"
                 content={students}
                 onSave={updateMembers}
                 renderEditor={(content, onSave, { saving, onCancel }) => (
                   <MembersEditorModal
-                    title="STUDENTS (학생 목록)"
+                    title={t('students')}
                     data={content}
                     onSave={onSave}
                     onCancel={onCancel}
@@ -560,9 +579,12 @@ export default function SinglePage() {
                   />
                 )}
               >
-                <div className="mb-16">
-                  <SectionTitle title="STUDENTS" />
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="members-block">
+                  <div className="members-block-head">
+                    <SectionTitle title={t('students')} subtitle={t('students_sub')} />
+                    <span className="members-count">{String(students.length).padStart(2, '0')}</span>
+                  </div>
+                  <div className="member-grid member-grid-dense">
                     {students.map((p, i) => (
                       <PersonCard key={i} {...p} />
                     ))}
@@ -570,14 +592,13 @@ export default function SinglePage() {
                 </div>
               </EditableSection>
 
-              {/* Alumni 편집 가능 */}
               <EditableSection
                 sectionKey="alumni"
                 content={alumni}
                 onSave={updateMembers}
                 renderEditor={(content, onSave, { saving, onCancel }) => (
                   <MembersEditorModal
-                    title="Alumni (졸업생 목록)"
+                    title={t('alumni')}
                     data={content}
                     onSave={onSave}
                     onCancel={onCancel}
@@ -585,28 +606,28 @@ export default function SinglePage() {
                   />
                 )}
               >
-                <div>
-                  <SectionTitle title="Alumni" />
-                  <div className="space-y-4">
+                <div className="members-block members-block-last">
+                  <div className="members-block-head">
+                    <SectionTitle title={t('alumni')} subtitle={t('alumni_sub')} />
+                    <span className="members-count">{String(alumni.length).padStart(2, '0')}</span>
+                  </div>
+                  <div className="alumni-stack">
                     {alumni.map((p, i) => (
-                      <div
-                        key={i}
-                        className="p-5 bg-white rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border border-gray-200"
-                      >
-                        <div className="flex items-center gap-4 flex-1 min-w-0">
-                          <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1e3a5f] to-[#c9a227] flex-shrink-0 flex items-center justify-center overflow-hidden">
+                      <div key={i} className="alumni-row">
+                        <div className="alumni-identity">
+                          <div className="member-avatar member-avatar-sm">
                             {p.profile_image ? (
-                              <img src={p.profile_image} alt={p.name} className="w-full h-full object-cover" />
+                              <img src={p.profile_image} alt={p.name} />
                             ) : (
-                              <span className="text-lg font-bold text-white">{(p.name || '?').charAt(0)}</span>
+                              <span>{(p.name || '?').charAt(0)}</span>
                             )}
                           </div>
-                          <div className="min-w-0">
-                            <h3 className="font-semibold text-gray-900">{p.name}</h3>
-                            <p className="text-sm text-gray-600">{p.role}</p>
+                          <div>
+                            <h3>{p.name}</h3>
+                            <p>{p.role}</p>
                           </div>
                         </div>
-                        <span className="text-sm text-[#1e3a5f] font-medium flex-shrink-0">{p.period}</span>
+                        <span className="member-period">{p.period}</span>
                       </div>
                     ))}
                   </div>
@@ -617,14 +638,13 @@ export default function SinglePage() {
         </div>
       </section>
 
-      {/* Openings */}
       <EditableSection
         sectionKey="openings"
         content={openings}
         onSave={updateOpenings}
         renderEditor={(content, onSave, { saving, onCancel }) => (
           <OpeningsEditorModal
-            title="Openings (채용 정보)"
+            title="Openings"
             data={content}
             onSave={onSave}
             onCancel={onCancel}
@@ -634,48 +654,39 @@ export default function SinglePage() {
       >
         <section id="openings" className="ref-section-light scroll-mt-24">
           <div className="max-w-6xl mx-auto">
-            <SectionTitle title="Openings" subtitle="Applied AI Lab에서 함께할 인재를 찾습니다." />
+            <SectionTitle title={t('openings_title')} subtitle={t('openings_sub')} />
             {!openingsLoading && (
               <>
-                <div className="mb-12">
-                  <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">모집 분야</h3>
-                  <ul className="space-y-2">
+                <div className="outcome-block">
+                  <h3>{t('positions_heading')}</h3>
+                  <ul className="outcome-list plain">
                     {positions.map((p, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-[#c9a227]" />
-                        <span className="text-gray-800 font-medium">{p}</span>
-                      </li>
+                      <li key={i}>{p}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="mb-12">
-                  <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">Our Supporting & Benefits</h3>
-                  <ol className="list-decimal list-inside space-y-2 text-gray-700">
+                <div className="outcome-block">
+                  <h3>{t('benefits_heading')}</h3>
+                  <ol className="outcome-olist">
                     {benefits.map((b, i) => (
                       <li key={i}>{b}</li>
                     ))}
                   </ol>
                 </div>
-                <div className="mb-12">
-                  <h3 className="text-xl font-bold text-[#1e3a5f] mb-4">How to Apply?</h3>
-                  <p className="text-gray-700 mb-4">{contactText}</p>
-                  <ul className="space-y-2">
+                <div className="outcome-block">
+                  <h3>{t('apply_heading')}</h3>
+                  <p className="mb-4 text-[var(--ink-soft)]">{contactText}</p>
+                  <ul className="outcome-list">
                     {apply.map((a, i) => (
-                      <li key={i} className="flex gap-2">
-                        <span className="text-[#c9a227]">-</span>
-                        {a}
-                      </li>
+                      <li key={i}>{a}</li>
                     ))}
                   </ul>
                 </div>
-                <div className="p-6 bg-[#1e3a5f]/5 rounded-xl border border-[#1e3a5f]/20">
-                  <p className="font-semibold text-[#1e3a5f] mb-2">문의 및 지원</p>
-                  <p className="text-gray-700 mb-4">위 서류를 이메일로 보내주세요.</p>
-                  <a
-                    href="#contact"
-                    className="inline-block px-6 py-3 bg-[#1e3a5f] text-white rounded-lg font-medium hover:opacity-90"
-                  >
-                    연락처 보기
+                <div className="apply-panel">
+                  <p className="apply-panel-title">{t('apply_cta_title')}</p>
+                  <p className="apply-panel-body">{t('apply_cta_body')}</p>
+                  <a href="#contact" className="action-chip">
+                    {t('apply_cta_button')}
                   </a>
                 </div>
               </>
@@ -684,99 +695,82 @@ export default function SinglePage() {
         </section>
       </EditableSection>
 
-      {/* Contact */}
       <section id="contact" className="ref-section-light scroll-mt-24">
         <div className="max-w-6xl mx-auto">
-          <SectionTitle title="CONTACT US" />
-          <div className="grid md:grid-cols-2 gap-12">
+          <SectionTitle title={t('contact_title')} />
+          <div className="contact-grid">
             <div>
-              <h3 className="text-xl font-bold text-[#1e3a5f] mb-6">연락처</h3>
-              <ul className="space-y-4 text-gray-700">
+              <h3>{t('contact_info')}</h3>
+              <ul className="contact-list">
                 <li>
-                  <span className="font-semibold text-gray-900">전화</span>
-                  <br />
-                  <a
-                    href={`tel:${(contact.phone || '').replace(/\s/g, '')}`}
-                    className="text-[#1e3a5f] hover:underline"
-                  >
-                    {contact.phone}
-                  </a>
+                  <span>{t('contact_phone')}</span>
+                  <a href={`tel:${(contact.phone || '').replace(/\s/g, '')}`}>{contact.phone}</a>
                 </li>
                 <li>
-                  <span className="font-semibold text-gray-900">이메일</span>
-                  <br />
-                  <a href={`mailto:${contact.email}`} className="text-[#1e3a5f] hover:underline">
-                    {contact.email}
-                  </a>
+                  <span>{t('contact_email')}</span>
+                  <a href={`mailto:${contact.email}`}>{contact.email}</a>
                 </li>
                 <li>
-                  <span className="font-semibold text-gray-900">주소</span>
-                  <br />
-                  {contact.address}
-                  <br />
-                  <span className="text-gray-600">{contact.room}</span>
+                  <span>{t('contact_address')}</span>
+                  <p>
+                    {contact.address}
+                    <br />
+                    {contact.room}
+                  </p>
                 </li>
               </ul>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-[#1e3a5f] mb-6">문의하기</h3>
-              <form onSubmit={handleContactSubmit} className="space-y-4">
+              <h3>{t('contact_form')}</h3>
+              <form onSubmit={handleContactSubmit} className="contact-form">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
+                  <label htmlFor="contact-name">{t('form_name')}</label>
                   <input
+                    id="contact-name"
                     type="text"
                     name="name"
                     value={contactForm.name}
                     onChange={(e) => setContactForm((p) => ({ ...p, name: e.target.value }))}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">이메일</label>
+                  <label htmlFor="contact-email">{t('form_email')}</label>
                   <input
+                    id="contact-email"
                     type="email"
                     name="email"
                     value={contactForm.email}
                     onChange={(e) => setContactForm((p) => ({ ...p, email: e.target.value }))}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">제목</label>
+                  <label htmlFor="contact-subject">{t('form_subject')}</label>
                   <input
+                    id="contact-subject"
                     type="text"
                     name="subject"
                     value={contactForm.subject}
                     onChange={(e) => setContactForm((p) => ({ ...p, subject: e.target.value }))}
                     required
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">내용</label>
+                  <label htmlFor="contact-message">{t('form_message')}</label>
                   <textarea
+                    id="contact-message"
                     name="message"
                     value={contactForm.message}
                     onChange={(e) => setContactForm((p) => ({ ...p, message: e.target.value }))}
                     required
                     rows={4}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e3a5f] focus:border-transparent"
                   />
                 </div>
-                {contactStatus === 'success' && (
-                  <p className="text-green-600 font-medium">문의가 접수되었습니다.</p>
-                )}
-                {contactStatus === 'error' && (
-                  <p className="text-red-600 font-medium">전송에 실패했습니다. 이메일로 직접 연락해 주세요.</p>
-                )}
-                <button
-                  type="submit"
-                  disabled={contactStatus === 'sending'}
-                  className="px-6 py-3 bg-[#1e3a5f] text-white rounded-lg font-medium hover:opacity-90 disabled:opacity-50"
-                >
-                  {contactStatus === 'sending' ? '전송 중...' : '보내기'}
+                {contactStatus === 'success' && <p className="form-ok">{contactFeedback || t('form_success')}</p>}
+                {contactStatus === 'error' && <p className="form-err">{contactFeedback || t('form_error')}</p>}
+                <button type="submit" disabled={contactStatus === 'sending'} className="action-chip">
+                  {contactStatus === 'sending' ? t('form_sending') : t('form_send')}
                 </button>
               </form>
             </div>
@@ -784,41 +778,40 @@ export default function SinglePage() {
         </div>
       </section>
 
-      {/* Our Lab - 푸터 바로 위 */}
       <section className="ref-our-service-section">
         <div className="ref-service-header">
-          <h2 style={{ fontWeight: 'bold' }}>Our Lab</h2>
-          <p>Applied AI Lab과 함께하세요.</p>
+          <h2>{t('our_lab')}</h2>
+          <p>{t('our_lab_sub')}</p>
         </div>
         <ul className="ref-service-list">
           <li className="ref-service-item">
-            <a href="#about" className="flex flex-1 justify-between items-center w-full text-left hover:text-white">
-              <span className="ref-service-name">소개</span>
-              <span className="ref-service-desc">About · Professor</span>
+            <a href="#about" className="flex flex-1 justify-between items-center w-full text-left">
+              <span className="ref-service-name">{t('lab_about')}</span>
+              <span className="ref-service-desc">{t('lab_about_desc')}</span>
             </a>
           </li>
           <li className="ref-service-item">
             <a href="#research" className="flex flex-1 justify-between items-center w-full text-left">
-              <span className="ref-service-name">연구</span>
-              <span className="ref-service-desc">Publications · R&D</span>
+              <span className="ref-service-name">{t('lab_research')}</span>
+              <span className="ref-service-desc">{t('lab_research_desc')}</span>
             </a>
           </li>
           <li className="ref-service-item">
-            <a href="#members" className="flex flex-1 justify-between items-center w-full text-left hover:text-white">
-              <span className="ref-service-name">멤버</span>
-              <span className="ref-service-desc">Researchers · Students</span>
+            <a href="#members" className="flex flex-1 justify-between items-center w-full text-left">
+              <span className="ref-service-name">{t('lab_members')}</span>
+              <span className="ref-service-desc">{t('lab_members_desc')}</span>
             </a>
           </li>
           <li className="ref-service-item">
-            <a href="#openings" className="flex flex-1 justify-between items-center w-full text-left hover:text-white">
-              <span className="ref-service-name">채용</span>
-              <span className="ref-service-desc">Career · Openings</span>
+            <a href="#openings" className="flex flex-1 justify-between items-center w-full text-left">
+              <span className="ref-service-name">{t('lab_career')}</span>
+              <span className="ref-service-desc">{t('lab_career_desc')}</span>
             </a>
           </li>
           <li className="ref-service-item">
-            <a href="#contact" className="flex flex-1 justify-between items-center w-full text-left hover:text-white">
-              <span className="ref-service-name">문의</span>
-              <span className="ref-service-desc">Contact</span>
+            <a href="#contact" className="flex flex-1 justify-between items-center w-full text-left">
+              <span className="ref-service-name">{t('lab_contact')}</span>
+              <span className="ref-service-desc">{t('lab_contact_desc')}</span>
             </a>
           </li>
         </ul>

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1100" role="img" aria-labelledby="title desc">
+  <title id="title">Applied intelligence field</title>
+  <desc id="desc">An abstract computational terrain representing adaptive AI research.</desc>
+  <defs>
+    <linearGradient id="ground" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eff7f5"/>
+      <stop offset=".46" stop-color="#d3e8e3"/>
+      <stop offset="1" stop-color="#8eb9ad"/>
+    </linearGradient>
+    <radialGradient id="bloom" cx="69%" cy="29%" r="69%">
+      <stop offset="0" stop-color="#f9fffd" stop-opacity=".94"/>
+      <stop offset=".26" stop-color="#c7e4dc" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#4c8d80" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ribbon" x1="0" y1="1" x2="1" y2="0">
+      <stop stop-color="#0d312e"/>
+      <stop offset=".48" stop-color="#2f776a"/>
+      <stop offset="1" stop-color="#d6eee8"/>
+    </linearGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+    <pattern id="dots" width="26" height="26" patternUnits="userSpaceOnUse">
+      <circle cx="1.5" cy="1.5" r="1.5" fill="#2b7165" opacity=".18"/>
+    </pattern>
+  </defs>
+
+  <rect width="1600" height="1100" fill="url(#ground)"/>
+  <rect width="1600" height="1100" fill="url(#bloom)"/>
+  <rect width="1600" height="1100" fill="url(#dots)" opacity=".48"/>
+  <ellipse cx="1270" cy="190" rx="390" ry="228" fill="#f9fffd" opacity=".56" filter="url(#soft)"/>
+
+  <!-- Computational terrain: deliberately visual, not a faux dashboard -->
+  <g fill="none" stroke="#22685d" stroke-linecap="round">
+    <path d="M-70 854C110 750 203 881 352 804S610 591 755 683s191 173 318 73 216-290 574-202" stroke-width="2" opacity=".28"/>
+    <path d="M-70 810C113 696 226 839 373 748S606 527 778 637s185 193 313 77 224-324 578-222" stroke-width="2" opacity=".34"/>
+    <path d="M-70 766C109 652 250 797 398 694S606 464 802 588s176 215 308 81 233-357 567-242" stroke-width="3" opacity=".42"/>
+    <path d="M-70 722C117 608 276 754 426 642S620 404 828 543s168 236 305 86 232-391 539-265" stroke-width="3" opacity=".5"/>
+    <path d="M-70 678C134 566 300 707 454 591S638 346 855 499s157 257 299 94 229-423 503-290" stroke-width="4" opacity=".58"/>
+    <path d="M-70 633C152 525 328 656 484 538S656 291 884 459s144 275 291 100 218-452 463-318" stroke-width="4" opacity=".64"/>
+    <path d="M-70 588C174 484 358 602 515 482S680 238 914 422s130 291 280 106 203-477 413-347" stroke-width="5" opacity=".7"/>
+  </g>
+
+  <g opacity=".94">
+    <path d="M-30 904C177 766 337 841 500 700S779 502 943 596s155 184 300 91 227-335 403-307" fill="none" stroke="#edf9f6" stroke-width="27"/>
+    <path d="M-30 904C177 766 337 841 500 700S779 502 943 596s155 184 300 91 227-335 403-307" fill="none" stroke="url(#ribbon)" stroke-width="11"/>
+  </g>
+
+  <g fill="#154b44">
+    <circle cx="500" cy="700" r="12"/><circle cx="943" cy="596" r="12"/><circle cx="1243" cy="687" r="12"/>
+  </g>
+  <g fill="#f7fffc">
+    <circle cx="500" cy="700" r="4"/><circle cx="943" cy="596" r="4"/><circle cx="1243" cy="687" r="4"/>
+  </g>
+
+  <g fill="#164941" font-family="ui-monospace, SFMono-Regular, Consolas, monospace" letter-spacing="3">
+    <text x="88" y="94" font-size="17">APPLIED AI LAB</text>
+    <text x="88" y="128" font-size="11" opacity=".62">ADAPTIVE COMPUTATIONAL TERRAIN</text>
+    <text x="88" y="1020" font-size="12" opacity=".62">OBSERVE  —  MODEL  —  INTERPRET</text>
+  </g>
+  <g transform="translate(1320 878)" fill="none" stroke="#1c5e54" opacity=".42">
+    <circle r="74" stroke-width="1"/><circle r="49" stroke-width="1"/><circle r="24" stroke-width="1"/>
+    <path d="M-95 0H95M0-95V95" stroke-width="1"/>
+  </g>
+</svg>
